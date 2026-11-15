@@ -1,0 +1,10 @@
+# Binary design and print files: never diff or merge as text
+*.stl     binary
+*.3mf     binary
+*.sketch  binary
+*.png     binary
+
+# Third-party code bundled with the reader: keep it out of GitHub's language stats
+firmware/duet-reader/Fonts/**       linguist-vendored
+firmware/duet-reader/src/inflate/** linguist-vendored
+firmware/duet-reader/duet_logo.h    linguist-generated

@@ -2,3 +2,7 @@ archive/
 duet-build.zip
 .DS_Store
 Claude outputs/
+# Slicer and OpenSCAD scratch files
+*.gcode
+*.bgcode
+*.scad.bak

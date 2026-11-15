@@ -2,11 +2,10 @@
 //  Duet case (Folio design) — Inkplate 6 e-reader + MP3 player
 //  Parametric OpenSCAD model. Every dimension is in mm.
 //
-//  Export one part at a time:
-//    openscad -D 'part="bezel"'    -o bezel.stl    duet-case.scad
-//    openscad -D 'part="tray"'     -o tray.stl     duet-case.scad
-//    openscad -D 'part="keys"'     -o keys.stl     duet-case.scad   (keys + battery strap)
-//    openscad -D 'part="fit_test"' -o fit_test.stl duet-case.scad
+//  Export: run tools/export-case.sh from the repo root (all parts, or one:
+//  tools/export-case.sh bezel). By hand, one part at a time:
+//    openscad -D 'part="bezel"' -o stl/duet-bezel.stl duet-case.scad
+//    parts: bezel, tray, keys (keys + battery strap), fit_test
 //    part="assembly" shows everything (preview only, not for printing)
 //
 //  Coordinates: X = across the device, Y = up the device (0 = bottom),
@@ -34,6 +33,7 @@ active_h    = 122.4;
 panel_gap   = 0.4;     // foam gasket between bezel and panel
 stack       = 10.0;    // panel front -> back of the board's M3 standoffs. MEASURE THIS.
 pcb_back    = 3.0;     // panel front -> back face of the PCB
+window_dy   = 5.0;     // screen window sits this far toward the top of the case, off the board centre
 
 /* [Case] */
 wall        = 2.0;
@@ -200,7 +200,7 @@ module slot_y(x, y, z, w, h, depth) {           // slot through a wall facing ±
 //  BEZEL: front plate + outer lip + screw bosses in the chin
 // =====================================================================
 module bezel() {
-  wc = bp(board_w/2, board_h/2);   // screen centre
+  wc = bp(board_w/2, board_h/2) + [0, window_dy];   // screen centre: the active area sits above the board centre
   union() {
     intersection() {               // stops short of the tray's top wall
       bezel_body(wc);

@@ -53,6 +53,9 @@ CHANGELOG.md          what changed in each version
   GitHub tags page; there's no need for copied `archive/` folders.
 - **Firmware version** is `DUET_VERSION` in `duet-reader.ino`. Bump it when you tag.
 
+## Blog
+[Duet Post](https://michaelmassie.com/blog/2026/11/14/Duet-a-3D-printed-ereader-and-music-player)
+
 ## Licence
 
 Firmware and case are [GNU GPL v3.0](LICENSE). Bundled third-party files keep their own

@@ -4,6 +4,8 @@ An open-source, 3D-printed, Kindle-sized **e-ink reader and MP3 player**. A Sold
 Inkplate 6 shows the books; an Adafruit HUZZAH32 plays your MP3s to a headphone jack
 or Bluetooth headphones. No phone, app or account.
 
+![Duet](https://michaelmassie.com/assets/img/duetHeroImage.jpeg)
+
 | | |
 |---|---|
 | ![Music screens](docs/images/ui-music-screens.png) |

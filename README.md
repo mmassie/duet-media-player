@@ -6,7 +6,7 @@ or Bluetooth headphones. No phone, app or account.
 
 | | |
 |---|---|
-| ![Case, front](docs/images/case-front.png) | ![Music screens](docs/images/ui-music-screens.png) |
+| ![Music screens](docs/images/ui-music-screens.png) |
 
 **Status: v0.5, work in progress.** The reader runs on hardware. The audio firmware
 and the latest case revision haven't been tested on hardware yet. See

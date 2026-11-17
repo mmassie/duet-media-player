@@ -6,6 +6,17 @@ make them; when you tag a release, rename that heading to the version and date.
 ## Unreleased
 
 ### Case
+- **Keys and switches reworked** (the v0.5 parts didn't fit):
+  - Side page keys: the switch pocket used to sit in the key's path, so a key
+    couldn't be put in, and its flange had no room between the wall and the switch.
+    The pocket now starts beyond the key's length, there's 0.3 mm of play
+    (`key_slack`), and the switch drops in with its legs either side of the back stop
+    instead of having to fit through a slot.
+  - Chin keys: a seat behind each of the three keys (the centre one had none; the two
+    pillars only held a perfboard strip). No perfboard needed now.
+  - More room for the chin keys' flanges between the bezel rails (`key_side_fit`).
+  - New switch settings (`tact_*`) to match your switches, and a key fit-test part
+    (`duet-key_test.stl`).
 - Screen window in the bezel moved 5 mm toward the top of the case so it frames the
   display (`window_dy`). Bezel and fit-test STLs re-exported.
 

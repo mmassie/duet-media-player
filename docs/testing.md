@@ -12,8 +12,14 @@ real hardware.
   and each other, including the screw heads under the face-down boards. Component
   **heights** in that file are conservative estimates, not measurements.
 - All four STLs are watertight.
-- **Not yet printed:** the top tongue-and-groove joint, the recessed key icons, and the
-  screen window moved 5 mm toward the top. Print the fit test first.
+- The key and switch fit is checked in software against a model of a 6 × 6 × 5 mm
+  through-hole switch: each switch drops into its seat without touching anything, each
+  side key can be lowered in and pushed out through its hole, every key presses
+  0.25 mm with 0.3 mm of free play, and nothing reaches the Inkplate's parts. Real
+  switches vary, so print `duet-key_test.stl` first.
+- **Not yet printed:** the reworked key pockets and chin seats (v0.5 prints didn't fit),
+  the top tongue-and-groove joint, the recessed key icons, and the screen window moved
+  5 mm toward the top.
 
 ## Reader firmware
 

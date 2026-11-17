@@ -24,6 +24,23 @@ re-export (see [hardware/README.md](../hardware/README.md)).
 
 ![Top joint section](images/case-top-joint-section.png)
 
+Then print `hardware/case/stl/duet-key_test.stl` (≈20 min) and try it with your
+switches. It has a side-wall page-key pocket, one chin-key seat with the bezel piece
+that sits over it, and one key of each kind:
+
+- **Side pocket:** push the key out through the wall hole from inside, then drop a
+  switch in from the open front, plunger against the key, **legs pointing along the
+  wall** (toward where the top and bottom of the case would be). The legs slide down
+  either side of the little back stop.
+- **Chin seat:** drop a switch on the pedestal, plunger up, **legs pointing left and
+  right**. Put the chin key in the bezel piece and lay it over: the key should click
+  with about 0.3 mm of free play before the click.
+
+Too tight round the switch body: raise `tact_fit` (0.25 → 0.35). Keys rattle: lower
+`key_slack` (0.3 → 0.15). Keys bind between the bezel rails: raise `key_side_fit`.
+
+![Key test part](images/case-key-test.png)
+
 Measure these with calipers before the full print:
 
 | Measure | Variable | Default |
@@ -34,6 +51,7 @@ Measure these with calipers before the full print:
 | Your battery's thickness (the strap clamps to exactly this) | `batt_t` | 5.0 |
 | Hole size your M2.5 inserts ask for | `ins25_d` | 3.6 |
 | How far the screen window sits above the board centre | `window_dy` | 5.0 |
+| Your tactile switches: body, height with plunger, leg-row spacing | `tact_body`, `tact_h`, `tact_leg_pitch` | 6.0, 5.0, 6.5 |
 
 ## 2. Print settings
 
@@ -43,6 +61,7 @@ Measure these with calipers before the full print:
 | `duet-tray.stl` | Back down | No supports. Standoffs, pockets and cradle all grow up from the bed. |
 | `duet-keys.stl` | Flat | 3 chin keys, 2 side keys, the WAKE plunger and the battery strap. The keys have icons sunk 0.5 mm into their tops and square flanges so they can't turn; use a 0.4 mm nozzle or smaller and 0.1–0.15 mm layers for crisp icons. The two skip keys are the same part: fit one turned round. |
 | `duet-fit_test.stl` | As exported | Tray strip back down, bezel strip face down. Checks the ports and the top tongues. |
+| `duet-key_test.stl` | As exported | Side pocket, chin seat, bezel chin piece, one key of each kind. Checks the switches and keys. |
 
 PETG or PLA+, 0.2 mm layers, **4 walls** (gives the insert standoffs solid plastic to
 melt into), 20 % infill.
@@ -61,7 +80,7 @@ Adafruit #4682 microSD breakout, a 3.7 V LiPo with a JST-PH plug, a Qwiic cable.
 | M3 × 6 mm screws | 4 | Tray → the Inkplate's own standoffs |
 | M2 heat-set inserts (3.2 mm hole, 4 mm long) | 2 | Bezel chin bosses |
 | M2 × 12 mm countersunk screws | 2 | Bezel → tray |
-| 6 × 6 × 5 mm tactile switches | 5 | 3 chin, 2 side |
+| 6 × 6 × 5 mm through-hole tactile switches (4 legs) | 5 | 3 chin, 2 side |
 | SS12D00-style slide switch | 1 | Audio power |
 | 0.5 mm foam strip | 1 | Gasket around the screen window only |
 
@@ -81,9 +100,9 @@ I2C bench check in [testing.md](testing.md#bench-check-before-you-solder-the-mus
 
 1. **Inserts.** Press the 10 M2.5 inserts into the tray standoffs and the 2 M2 inserts into the bezel chin bosses (iron at ~220 °C for PETG; let the insert sink under its own weight, finish flush).
 2. **WAKE plunger.** Drop it into its guide tube from inside the tray, stop flange toward the board.
-3. **Side keys.** Put a printed key through each side hole from inside, then press a 6 × 6 switch into the pocket behind it, plunger against the key. Legs go through the slot in the pocket's back.
+3. **Side keys.** Solder two wires to each side switch first. Put a printed key through each side hole from inside (lower it in beside the wall, then push it out through the hole), then drop the switch into the pocket from the front, plunger against the key and legs pointing toward the top and bottom of the case.
 4. **Slide switch.** Press it into the pocket behind the bottom-edge slot, lever through the slot.
-5. **Chin keys.** Solder the three chin switches to a perfboard strip ~42 × 12 mm at 15.9 mm spacing. It's clamped between the bezel and the two tray pillars when the bezel goes on.
+5. **Chin keys.** Solder wires to the three chin switches and set one on each of the three seats in the chin, plunger up, legs pointing left and right. Drop the three printed keys into the bezel's chin holes from inside (the skip keys turned so their arrows point outward). The bezel holds them against the switches when it goes on.
 6. **Audio boards, face-down.** Each board mounts *components toward the back of the case*, flat side toward the Inkplate:
    - **Solder wires before mounting, from the component side**, and trim the legs flush on the flat side. The flat side has only 0.8 mm of clearance to the Inkplate.
    - microSD board (top right): card edge to the side slot, 2 screws.

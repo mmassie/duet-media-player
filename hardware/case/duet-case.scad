@@ -23,7 +23,7 @@
 
 include <inkplate_parts.scad>
 
-part = "assembly";   // bezel | tray | keys | fit_test | assembly
+part = "assembly";   // bezel | tray | keys | fit_test | key_test | assembly
 
 /* [Inkplate 6 board] */
 board_w     = 107.8;   // board width  (short side)
@@ -100,7 +100,18 @@ strap_t     = 2.4;
 key_hole    = 7.0;
 key_d       = 6.4;
 key_flange  = 8.6;      // square flange: it keeps the key (and its icon) from turning
+key_flange_t= 1.0;      // flange thickness
+key_slack   = 0.3;      // free play between a key's flange and its switch's plunger
+key_side_fit= 0.3;      // gap each side of a chin key's flange, between the bezel rails
 icon_depth  = 0.5;      // how deep the icons are sunk into the key tops (0 = plain keys)
+
+/* [Tactile switches: 6 x 6 x 5 mm through-hole] */
+tact_body   = 6.0;      // body, square
+tact_body_h = 3.5;      // body height without the plunger
+tact_h      = 5.0;      // height including the plunger
+tact_fit    = 0.25;     // clearance each side of the body in its pocket
+tact_leg_pitch = 6.5;   // centre distance between the two rows of legs
+tact_leg_len   = 3.5;   // how far the legs reach past the base
 
 $fn = 48;
 
@@ -165,8 +176,6 @@ sd_card     = sd_xy([12.64, 22.86]);   sd_card_z     = zface(s_sd) + 0.9;
 // side page keys (both walls) and their switch pockets
 page_y      = 64;
 key_z       = 10.5;
-tact        = 6.2;     // 6 x 6 mm tactile switch body + clearance
-tact_h      = 5.0;     // switch height including the plunger
 slide_x     = 88;                                  // audio power switch, bottom edge (left side, held)
 slide_z     = 10.0;
 chin_keys_x = [38.0, 53.9, 69.8];                  // ◀◀ ▶‖ ▶▶ (centre one under the screen centre)
@@ -231,8 +240,8 @@ module bezel_body(wc) {
       }
       // two low rails either side of the chin keys: their square flanges slide in
       // between and can't turn, so the icons stay upright
-      for (sy = [-1, 1]) translate([bx0 + chin_keys_x[0] - 5.5, chin_key_y + sy*(key_flange/2 + 0.2 + 0.4) - 0.4, plate - 0.01])
-        cube([chin_keys_x[2] - chin_keys_x[0] + 11, 0.8, 1.01]);
+      for (sy = [-1, 1]) translate([bx0 + chin_keys_x[0] - 5.5, chin_key_y + (sy > 0 ? key_flange/2 + key_side_fit : -key_flange/2 - key_side_fit - 0.8), plate - 0.01])
+        cube([chin_keys_x[2] - chin_keys_x[0] + 11, 0.8, key_flange_t + 0.01]);
       // M2 bosses in the chin
       for (x = boss_x) translate([x, boss_y, plate - 0.01])
         cylinder(d = 6.5, h = cavity - plate - 0.2);
@@ -281,9 +290,8 @@ module tray() {
       wk = bp(wake_x, board_h);
       translate([wk[0] - 3, wall - 0.01, wake_z - 3]) cube([6, wk[1] - wall - 3, 6]);
       translate([wk[0] - 1, wall - 0.01, wake_z]) cube([2, wk[1] - wall - 3, cavity - wake_z + 0.01]);
-      // pillars that hold the chin key board against the bezel
-      for (x = [bx0 + 40, bx0 + 68]) translate([x, boss_y, plate + 1.0 + 5.0 + 1.6])
-        cylinder(d = 5, h = cavity - (plate + 1.0 + 5.0 + 1.6) + 0.01);
+      // a seat behind each chin key: its switch sits on it, plunger toward the key
+      for (x = chin_keys_x) chin_seat(bx0 + x);
       // ---- audio board standoffs ----
       for (l = feather_m25) standoff(feather_xy(l), s_feather, ins25_od);
       for (l = feather_pins) let(p = feather_xy(l)) {
@@ -297,8 +305,8 @@ module tray() {
       // ---- strap standoffs either side of the battery ----
       for (p = strap_posts()) standoff(p, s_strap, ins25_od);
       // ---- page-key switch pockets (both walls) ----
-      key_pocket(0);
-      key_pocket(1);
+      key_pocket();
+      translate([W, 0, 0]) mirror([1, 0, 0]) key_pocket();
       // ---- slide switch pocket (bottom wall) ----
       slide_pocket();
     }
@@ -339,9 +347,6 @@ module tray() {
     slot_y(wall/2, feather_usb[1], feather_usb_z, 8.6, 4.0, wall + 2);
     translate([-0.01, feather_usb[1] - 5.5, feather_usb_z - 3.5]) cube([0.8, 11, 7]);   // room for the plug's overmould
     translate([-1, dac_jack[1], jack_z]) rotate([0,90,0]) cylinder(d = 5.2, h = wall + 2);
-    // switch-leg slots through the pocket back walls
-    key_pocket_slots(0);
-    key_pocket_slots(1);
     // WAKE plunger channel through the guide tube
     let(p = bp(wake_x, board_h)) translate([p[0] - 1.75, -1, wake_z - 1.75]) cube([3.5, p[1] + 2, 3.5]);
   }
@@ -372,27 +377,41 @@ module battery_cradle() {
     translate([x, y + ys, cavity - h]) cube([t, leg, h + 0.01]);
   }
 }
-// page-key pocket: a three-sided cup that grips a 6x6 tact switch with its plunger
-// against the key, open toward the front so the switch drops in before the Inkplate.
-function pocket_x(side) = side == 0 ? wall + 1.0 : W - wall - 1.0;   // plunger tip plane
-module key_pocket(side) {
-  y = bp(0, page_y)[1];
-  dir = side == 0 ? 1 : -1;
-  x_back = pocket_x(side) + dir * tact_h;          // back of the switch body
-  zb = key_z - tact/2;                             // open (front) edge of the cup
-  // side cheeks
-  for (sy = [-1, 1]) translate([min(pocket_x(side), x_back + dir*1.6), y + sy*(tact/2 + 0.6) - 0.6, zb])
-    cube([tact_h + 1.6, 1.2, cavity - zb + 0.01]);
-  // back stop (legs pass through slots)
-  translate([side == 0 ? x_back : x_back - 1.6, y - tact/2 - 1.2, zb]) cube([1.6, tact + 2.4, cavity - zb + 0.01]);
-  // floor: fills from the switch's rear face to the back wall
-  translate([min(pocket_x(side), x_back), y - tact/2 - 1.2, key_z + tact/2]) cube([tact_h, tact + 2.4, cavity - key_z - tact/2 + 0.01]);
+// Switch seats. A 6x6 through-hole tact switch has its legs on two opposite faces,
+// 6.5 mm apart, reaching ~3.5 mm past the base. Everything below grips the other two
+// faces and pushes on the base only BETWEEN the leg rows, so the legs (and the wires
+// soldered to them) hang free.
+leg_gap = tact_leg_pitch/2 - 0.75;                 // half-width that fits between the leg rows
+
+// Page-key pocket on the X = 0 wall (mirrored for the other wall). The switch lies on
+// its side, plunger against the key, legs pointing toward the TOP and BOTTOM of the
+// case. It drops in from the front before the Inkplate goes in: the legs slide down
+// either side of the back stop, and the stop pushes on the base between them.
+module key_pocket() {
+  y  = bp(0, page_y)[1];
+  px = wall + key_flange_t + key_slack;            // plunger tip
+  xb = px + tact_h;                                // switch base
+  // The key goes in from inside: lowered in beside the wall, then pushed out through
+  // its hole. The pocket starts beyond the key's full length so nothing is in the way.
+  x0 = max(px + 0.8, wall + key_flange_t + wall + 1.0 + 0.3);
+  g  = tact_body/2 + tact_fit;  t = 1.2;
+  // cheeks on the leg faces, stopping before the legs come out near the base
+  for (sy = [-1, 1]) translate([x0, sy > 0 ? y + g : y - g - t, key_z - g])
+    cube([xb - 1.2 - x0, t, cavity - (key_z - g) + 0.01]);
+  // floor against the body's back face (no legs on that face), running on to the stop
+  translate([x0, y - g - t, key_z + g]) cube([xb + 2.0 - x0, 2*(g + t), cavity - key_z - g + 0.01]);
+  // back stop on the base, between the leg rows, hanging from the floor
+  translate([xb, y - leg_gap, key_z - g]) cube([2.0, 2*leg_gap, 2*g + 0.01]);
 }
-module key_pocket_slots(side) {
-  y = bp(0, page_y)[1];
-  dir = side == 0 ? 1 : -1;
-  x_back = pocket_x(side) + dir * tact_h;
-  translate([side == 0 ? x_back - 0.5 : x_back - 2.1, y - tact/2 - 0.2, key_z - 2.0]) cube([2.6, tact + 0.4, 4.0]);
+// Chin-key seat: the switch sits plunger-up toward the bezel, legs toward the left
+// and right. A pedestal between the leg rows carries the base; two low ribs on the
+// leg-free faces keep it centred under its key.
+module chin_seat(cx) {
+  cy = chin_key_y;
+  zb = plate + key_flange_t + key_slack + tact_h;  // switch base
+  g  = tact_body/2 + tact_fit;  t = 1.2;
+  translate([cx - leg_gap, cy - g - t, zb]) cube([2*leg_gap, 2*(g + t), cavity - zb + 0.01]);
+  for (sy = [-1, 1]) translate([cx - leg_gap, sy > 0 ? cy + g : cy - g - t, zb - 1.5]) cube([2*leg_gap, t, 1.51]);
 }
 // slide switch (SS12D00 style, 8.6 x 3.6 body) pocket behind the bottom-wall slot
 module slide_pocket() {
@@ -416,11 +435,11 @@ module icon_play()  { translate([-2.0, 0]) polygon([[0, -1.4], [0, 1.4], [1.7, 0
 module icon_page()  { polygon([[-1.2, -1.7], [-1.2, 1.7], [1.6, 0]]); }                                       // one arrow
 // A key: square flange (print side), round shaft, and the child shape sunk into its top
 module key(shaft_len) {
-  top = 0.99 + shaft_len;
+  top = key_flange_t - 0.01 + shaft_len;
   difference() {
     union() {
-      translate([-key_flange/2, -key_flange/2, 0]) cube([key_flange, key_flange, 1.0]);
-      translate([0, 0, 0.99]) cylinder(d = key_d, h = shaft_len);
+      translate([-key_flange/2, -key_flange/2, 0]) cube([key_flange, key_flange, key_flange_t]);
+      translate([0, 0, key_flange_t - 0.01]) cylinder(d = key_d, h = shaft_len);
     }
     translate([0, 0, top - 0.6]) difference() {            // chamfered rim
       cylinder(d = key_d + 1, h = 1);
@@ -466,6 +485,24 @@ module fit_test_bezel() {
   intersection() { bezel(); translate([-1, H - 14, -1]) cube([W + 2, 15, T + 2]); }
 }
 
+// KEY TEST: one page-key pocket, one chin seat and the bezel over it, plus a key of
+// each kind. Print it with a couple of switches to hand before the full case.
+module key_test() {
+  py = bp(0, page_y)[1];
+  kx = bx0 + chin_keys_x[0];
+  // side wall + page-key pocket, printed back down
+  translate([0, 18, T]) rotate([180,0,0]) translate([1, -(py - 9), 0])
+    intersection() { tray(); translate([-1, py - 9, -1]) cube([16, 18, T + 2]); }
+  // chin seat, printed back down
+  translate([22, 20, T]) rotate([180,0,0]) translate([-(kx - 8), 1, 0])
+    intersection() { tray(); translate([kx - 8, -1, -1]) cube([17, 20, T + 2]); }
+  // the bezel's chin over that seat, printed face down
+  translate([46, 0, 0]) translate([-(kx - 8), 1, 0])
+    intersection() { bezel(); translate([kx - 8, -1, -1]) cube([17, 20, T + 2]); }
+  translate([75, 6, 0]) key(plate + 1.0) icon_play();
+  translate([75, 19, 0]) key(wall + 1.0) icon_page();
+}
+
 // =====================================================================
 //  ASSEMBLY preview: board, panel and suggested audio part positions
 // =====================================================================
@@ -495,6 +532,7 @@ if (part == "fit_test") {
   translate([0, H, T]) rotate([180,0,0]) fit_test();
   translate([0, -H + 30, 0]) fit_test_bezel();             // prints face down beside it
 }
+if (part == "key_test") key_test();
 if (part == "assembly") {
   color("DimGray") bezel();
   color("Gainsboro", 0.9) tray();

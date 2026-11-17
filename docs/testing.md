@@ -17,7 +17,7 @@ real hardware.
   side key can be lowered in and pushed out through its hole, every key presses
   0.25 mm with 0.3 mm of free play, and nothing reaches the Inkplate's parts. Real
   switches vary, so print `duet-key_test.stl` first.
-- **Not yet printed:** the reworked key pockets and chin seats (v0.5 prints didn't fit),
+- **Not yet printed:** the flared Inkplate posts (the v0.5 posts snapped at the back), the reworked key pockets and chin seats (v0.5 prints didn't fit),
   the top tongue-and-groove joint, the recessed key icons, and the screen window moved
   5 mm toward the top.
 

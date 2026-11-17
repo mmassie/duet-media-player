@@ -64,6 +64,9 @@ tongue_end  = 0.2;     // spare depth at the end of each slot
 /* [Fasteners] */
 m3_clear    = 3.4;
 m3_head     = 6.2;
+m3_head_depth = 1.8;   // screw-head recess in the back (button head ~1.65 mm)
+post_d      = 7.0;     // posts that meet the Inkplate's M3 standoffs
+post_flare  = 2.5;     // 45-degree foot where each post joins the back
 m2_clear    = 2.4;
 m2_head     = 4.2;
 insert_d    = 3.2;     // M2 heat-set insert hole
@@ -283,9 +286,12 @@ module tray() {
         body(W, H, corner_r, 0, T, edge_chamfer);
         translate([-1, y_seam, -1]) cube([W + 2, top_band + 1, plate + skirt_d + 1.01]);
       }
-      // posts that meet the Inkplate's M3 standoffs
+      // posts that meet the Inkplate's M3 standoffs. The screw-head recess in the back
+      // is deeper than the back wall, so each post flares out into a wide foot: without
+      // it the post hangs on a 0.4 mm ring round the recess and snaps off.
       for (h = holes) { p = bp(h[0], h[1]);
-        translate([p[0], p[1], z_stand]) cylinder(d = 7, h = cavity - z_stand + 0.01); }
+        translate([p[0], p[1], z_stand]) cylinder(d = post_d, h = cavity - z_stand + 0.01);
+        translate([p[0], p[1], cavity - post_flare]) cylinder(d1 = post_d, d2 = post_d + 2*post_flare, h = post_flare + 0.01); }
       // guide tube for the WAKE plunger, tied to the back wall by a fin
       wk = bp(wake_x, board_h);
       translate([wk[0] - 3, wall - 0.01, wake_z - 3]) cube([6, wk[1] - wall - 3, 6]);
@@ -321,7 +327,7 @@ module tray() {
     // ---- through-holes in the back ----
     for (h = holes) { p = bp(h[0], h[1]);
       translate([p[0], p[1], 0]) cylinder(d = m3_clear, h = T + 1);
-      translate([p[0], p[1], T - 1.8]) cylinder(d = m3_head, h = 2); }
+      translate([p[0], p[1], T - m3_head_depth]) cylinder(d = m3_head, h = m3_head_depth + 0.2); }
     for (x = boss_x) {
       translate([x, boss_y, 0]) cylinder(d = m2_clear, h = T + 1);
       translate([x, boss_y, T - 1.3]) cylinder(d1 = m2_clear, d2 = m2_head + 0.6, h = 1.31);

@@ -17,6 +17,9 @@ make them; when you tag a release, rename that heading to the version and date.
   - More room for the chin keys' flanges between the bezel rails (`key_side_fit`).
   - New switch settings (`tact_*`) to match your switches, and a key fit-test part
     (`duet-key_test.stl`).
+- **Inkplate mounting posts no longer snap off.** The screw-head recess in the back
+  was deeper than the back wall, so each post hung on a 0.4 mm ring round it. The posts
+  now flare into a 45° foot (`post_flare`), leaving 2.7 mm of plastic round the recess.
 - Screen window in the bezel moved 5 mm toward the top of the case so it frames the
   display (`window_dy`). Bezel and fit-test STLs re-exported.
 

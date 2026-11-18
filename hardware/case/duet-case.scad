@@ -159,7 +159,10 @@ holes    = [[3.4,3.4],[104.4,3.4],[3.4,141.0],[104.4,141.0]];  // board M3 stand
 //   HUZZAH32 Feather  50.8 x 22.86   USB edge (lx = 0) at the wall
 //   UDA1334A DAC      38.1 x 25.4    jack edge (lx = 38.1) at the wall, rotated 180
 //   #4682 microSD     25.4 x 22.86   card edge (ly = 22.86) at the wall, rotated 90
-feather_ytop = 104;    dac_ytop = 76;    sd_ytop = 20;      // top edge of each board
+// Top to bottom along the wall: Feather, DAC, microSD. Mounted face-down, the Feather's
+// long header row (A0/A1/A5 to the DAC, SCK/MO/MI to the microSD) faces down toward
+// both, so those wires stay short.
+feather_ytop = 20;     dac_ytop = 76;    sd_ytop = 104;     // top edge of each board
 feather_o = [wall + 0.6, by_top - feather_ytop - 22.86];
 dac_o     = [wall + 0.3 + 2.5, by_top - dac_ytop - 25.4];   // jack mouth 0.3 mm inside the wall
 sd_o      = [wall + 0.6, by_top - sd_ytop - 25.4];
@@ -348,7 +351,7 @@ module tray() {
     // ---- side page keys ----
     let(p = bp(0, page_y)) translate([-1, p[1], key_z]) rotate([0,90,0]) cylinder(d = key_hole, h = wall + 2);
     let(p = bp(board_w, page_y)) translate([W - wall - 1, p[1], key_z]) rotate([0,90,0]) cylinder(d = key_hole, h = wall + 2);
-    // ---- X=0 wall (right side when held): music microSD, Feather USB, headphone jack ----
+    // ---- X=0 wall (right side when held): Feather USB, headphone jack, music microSD ----
     slot_y(wall/2, sd_card[1], sd_card_z, 12.6, 2.6, wall + 2);
     slot_y(wall/2, feather_usb[1], feather_usb_z, 8.6, 4.0, wall + 2);
     translate([-0.01, feather_usb[1] - 5.5, feather_usb_z - 3.5]) cube([0.8, 11, 7]);   // room for the plug's overmould

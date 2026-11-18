@@ -105,9 +105,10 @@ I2C bench check in [testing.md](testing.md#bench-check-before-you-solder-the-mus
 5. **Chin keys.** Solder wires to the three chin switches and set one on each of the three seats in the chin, plunger up, legs pointing left and right. Drop the three printed keys into the bezel's chin holes from inside (the skip keys turned so their arrows point outward). The bezel holds them against the switches when it goes on.
 6. **Audio boards, face-down.** Each board mounts *components toward the back of the case*, flat side toward the Inkplate:
    - **Solder wires before mounting, from the component side**, and trim the legs flush on the flat side. The flat side has only 0.8 mm of clearance to the Inkplate.
-   - microSD board (top right): card edge to the side slot, 2 screws.
+   - Feather (top right): USB to the side slot. 2 screws at the USB end; the two printed pins at the far end go through its small holes. Face-down, its long header row (A0, A1, A5, SCK, MO, MI) faces the DAC and microSD below it.
    - DAC (middle right): jack to the side hole, 4 screws.
-   - Feather (bottom right): USB to the side slot. 2 screws at the USB end; the two printed pins at the far end go through its small holes.
+   - microSD board (bottom right): card edge to the side slot, 2 screws.
+   - The three chin-key wires (GPIO 27, 32, 14) run the length of the case from the chin up to the Feather: route them along the wall.
 7. **Battery.** Lay it in the cradle, leads toward the bottom, and screw the strap across it (2 screws, heads sit in the strap's counterbores).
 8. **Wiring** per the diagram above. Cut the red 3.3 V wire of the Qwiic cable. Keep the two page-key wires routed along the walls, not under the boards.
 9. **Inkplate.** Plug in the battery and the Qwiic cable, then screw the board to the tray (4 × M3 from the back), screen facing out.

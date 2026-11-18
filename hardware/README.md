@@ -29,7 +29,7 @@ Set `part="assembly"` in OpenSCAD to preview everything together (not for printi
 
 ## The print project
 
-`case/print/duet-bambu-project.3mf` is a Bambu Studio project with the parts laid out
-on plates. It was saved on 13 Nov 2026, **before** the top tongue-and-groove joint and
-the screen-window move, so it holds old geometry. Re-import the current STLs into it
-before printing, then save it back here.
+`case/print/duet-bambu-project.3mf` is a Bambu Studio project with the bezel, tray and
+keys on plates. It was saved on 18 Nov 2026 at 3:34 pm, before the Feather and microSD
+boards swapped places, so its tray is one revision behind. Re-import `duet-tray.stl`
+before printing, then save the project back here.
